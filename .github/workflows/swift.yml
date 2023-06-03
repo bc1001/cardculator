@@ -1,22 +1,52 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+# This workflow uses actions that are not certified by GitHub.
 
+# They are provided by a third-party and are governed by
+
+# separate terms of service, privacy policy, and support
+
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+
+# To get a newer version, you will need to update the SHA.
+
+# You can als reference a tag or branch, but the a
 name: Swift
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push]
 
 jobs:
+
   build:
 
-    runs-on: macos-latest
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+
+    strategy:
+
+      matrix:
+
+        os: [macos-latest]
+
+        swift: ["5.8.0"]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+
+      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+
+        with:
+
+          swift-version: ${{ matrix.swift }}
+
+      - uses: actions/checkout@v3
+
+      - name: Build
+
+        run: swift build
+
+      - name: Run tests
+
+        run: swift test

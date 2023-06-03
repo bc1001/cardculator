@@ -1,0 +1,76 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: iOS Build
+
+on:
+
+  push:
+
+    branches:
+
+      - main  # 设置你的主分支
+
+  pull_request:
+
+    branches:
+
+      - main  # 设置你的主分支
+
+jobs:
+
+  build:
+
+    runs-on: macOS-latest
+
+    
+
+    steps:
+
+    - name: Checkout repository
+
+      uses: actions/checkout@v2
+
+    
+
+    - name: Set up Xcode
+
+      uses: actions/setup-xcode@v2
+
+      with:
+
+        xcode-version: '13.0'  # 设置适合Swift 5.8.0的Xcode版本
+
+    
+
+    - name: Set up Theos
+
+      run: |
+
+        git clone https://github.com/theos/theos.git ~/theos
+
+        cd ~/theos && git submodule update --init --recursive
+
+        echo "export THEOS=~/theos" >> $GITHUB_ENV
+
+        echo "export PATH=\$THEOS/bin:\$PATH" >> $GITHUB_ENV
+
+        source $GITHUB_ENV
+
+    
+
+    - name: Install dependencies
+
+      run: |
+
+        brew install ldid # 如果需要安装ldid，请取消注释这一行
+
+        # 安装其他依赖项
+
+        
+
+    - name: Build
+
+      run: make 
+
+

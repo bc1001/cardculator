@@ -31,6 +31,6 @@ jobs:
            echo "export PATH=\$THEOS/bin:\$PATH" >> $GITHUB_ENV
            source $GITHUB_ENV
       - name: Build
-        run: swift build
+        run: make spm && swift build
       - name: Run tests
         run: swift test

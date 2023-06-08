@@ -14,23 +14,16 @@ jobs:
         os: [macos-latest]
         swift: ["5.8.0"]
     runs-on: ${{ matrix.os }}
+    
     steps:
       - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v3
-      - name: Install_deps
-        run:  |
-
-           git clone https://github.com/theos/theos.git ~/theos
-
-           cd ~/theos && git submodule update --init --recursive
-
-           echo "export THEOS=~/theos" >> $GITHUB_ENV
-
-           echo "export PATH=\$THEOS/bin:\$PATH" >> $GITHUB_ENV
-           source $GITHUB_ENV
+      - uses: Randomblock1/theos-action@v1
+      - name: Prepare Theos
+        # Don't use @main in production, this repo is specifically for testing it.
+        uses: Randomblock1/theos-action@main
       - name: Build
-        run: make spm && swift build
-      - name: Run tests
-        run: swift test
+        run: swift build
+

@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: Randomblock1/theos-action@v1
       - name: Clone and Build Comet
-         run:|
+        run: |
           git clone https://github.com/ginsudev/Comet.git
           cd Comet
           make clean all

@@ -2,7 +2,7 @@ ARCHS = arm64 #arm64e
 INSTALL_TARGET_PROCESSES = SpringBoard
 #INSTALL_TARGET_PROCESSES = Preferences
 TARGET := iphone:clang:14.5:13.0
-export SYSROOT = $(THEOS)/sdks/iPhoneOS16.4.sdk
+export SYSROOT = $(THEOS)/sdks/iPhoneOS14.5.sdk
 
 include $(THEOS)/makefiles/common.mk
 

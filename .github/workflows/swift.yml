@@ -27,10 +27,6 @@ jobs:
           cd Comet
           make clean all
         
-      - name: Install Comet into Theos Library
-        run: |
-          mkdir -p $THEOS/lib/
-          cp -r Comet/.theos/obj/* $THEOS/lib/
          #run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
         # Don't use @main in production, this repo is specifically for testing it.
         #uses: Randomblock1/theos-action@main

@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import Comet
+//import Comet
 
 final class PreferenceManager {
     private(set) var settings: Settings!

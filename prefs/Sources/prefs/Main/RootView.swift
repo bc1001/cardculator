@@ -20,10 +20,13 @@ struct RootView: View {
                 if preferenceStorage.selectedStyle == "square" {
                     Toggle("Divide and Equal buttons swapped", isOn: $preferenceStorage.squareStyleSignsFlipped)
                 }
+                if preferenceStorage.selectedStyle != "card" && preferenceStorage.selectedStyle != "cardAlt" {
+                    Toggle("Square root", isOn: $preferenceStorage.squareRootInsteadOfPercentage)
+                }
             } header: {
                 Text("General")
             } footer: {
-                Text("To add the Cardculator Control Center module, go to Settings -> Control Center and add Cardculator from there.")
+                Text("To add the Cardculator Control Center module, go to Settings -> Control Center and add Cardculator from there.\n\nAll options don't require a respring, except for the \"Enabled\" toggle.")
             }
             
             Section {
@@ -32,13 +35,29 @@ struct RootView: View {
                 HStack {
                     Slider(value: $preferenceStorage.speed, in: 50...250)
                     Text("\(Int(preferenceStorage.speed))%")
-                        .frame(width: 40)
+                        .frame(width: 60)
                 }
             } header: {
                 Text("Behavior")
             }
-            .accentColor(.orange)
+            
+            Section {
+                Picker("hapticFeedback", selection: $preferenceStorage.hapticFeedback) {
+                    Text("Off").tag(-1)
+                    Text("Light").tag(UIImpactFeedbackGenerator.FeedbackStyle.light.rawValue)
+                    Text("Medium").tag(UIImpactFeedbackGenerator.FeedbackStyle.medium.rawValue)
+                    Text("Heavy").tag(UIImpactFeedbackGenerator.FeedbackStyle.heavy.rawValue)
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: preferenceStorage.hapticFeedback) { newValue in
+                    guard let style = UIImpactFeedbackGenerator.FeedbackStyle(rawValue: newValue), style.rawValue != -1 else { return }
+                    UIImpactFeedbackGenerator(style: style).impactOccurred()
+                }
+            } header: {
+                Text("Haptic Feedback (Vibration)")
+            }
         }
+        .accentColor(.orange)
         .toggleStyle(SwitchToggleStyle(tint: .orange))
     }
 }

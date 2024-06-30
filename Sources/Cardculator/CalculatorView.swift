@@ -13,6 +13,7 @@ enum Operation {
     case add,subtract,multiply,divide
 }
 
+
 struct CalculatorView: View {
     
     let close: () -> Void
@@ -68,6 +69,9 @@ struct CalculatorView: View {
     }
     
     func calculate() -> Double {
+        if numbers.count == 1 {
+            return numbers.first!
+        }
         var nums = numbers
         var opers = operations
         
@@ -131,6 +135,10 @@ struct CalculatorView: View {
     }
     
     func didTap(button: CalculatorButton.CalcButtonType) {
+        if let style = UIImpactFeedbackGenerator.FeedbackStyle(rawValue: PreferenceManager.shared.settings.hapticFeedback), style.rawValue != -1 {
+            UIImpactFeedbackGenerator(style: style).impactOccurred()
+        }
+        
         switch button {
         case .add, .subtract, .multiply, .divide, .equal:
             if selectedOperation == nil && !(button == .equal && numbers.count == 0) { // Only run on first operation click, not after switching
@@ -161,15 +169,26 @@ struct CalculatorView: View {
             selectedOperation = nil
             topText = number
         case .dot:
+            if selectedOperation != nil { // After pressing operation button
+                operations.append(selectedOperation!)
+                number = "0"
+                selectedOperation = nil
+            }
             if !number.contains(".") {
                 number += "."
             }
             topText = number
         case .percent:
-            UIApplication.shared.open(URL(string: "https://youtu.be/watch?v=xvFZjo5PgG0")!)
-            // Lol I'm not doing this crazy stuff...
-            // But this link has some documentations
-            // on that topic. You should check it out
+            if numbers.count == 0 {
+                number = ((Double(number) ?? 0) / 100.0).removeZerosFromEnd()
+                topText = number
+                break
+            }
+            let result = calculate() * (Double(number) ?? 0) / 100.0
+            number = result.removeZerosFromEnd()
+            
+            topText = result.removeZerosFromEnd()
+            selectedOperation = nil
         case .plusminus:
             number = number.prefix(1) == "-" ? String(number.suffix(number.count - 1)) : "-\(number)"
             topText = number
@@ -201,11 +220,12 @@ struct CalculatorView: View {
     
     
     func stylePrefChanged() {
-        remLog(PreferenceManager.shared.settings.selectedStyle)
+        try! PreferenceManager.shared.loadSettings()
         updateCalculatorStyle(style: PreferenceManager.shared.settings.selectedStyle)
     }
     func updateCalculatorStyle(style: Settings.CalculatorStyle) {
         let squareStyleSignsFlipped = PreferenceManager.shared.settings.squareStyleSignsFlipped
+        let squareRootInsteadOfPercentage = PreferenceManager.shared.settings.squareRootInsteadOfPercentage
         
         switch style {
         case .card:
@@ -222,7 +242,7 @@ struct CalculatorView: View {
            ]
         case .stock:
             buttonTypes = [
-                [.c,.plusminus,.sqrt,.divide],
+                [.c,.plusminus,(squareRootInsteadOfPercentage ? .sqrt : .percent),.divide],
                 [.seven,.eight,.nine,.multiply],
                 [.four,.five,.six,.subtract],
                 [.one,.two,.three,.add],
@@ -232,7 +252,7 @@ struct CalculatorView: View {
             buttonTypes = [
                 [.seven,.eight,.nine,.c,.subtract],
                 [.four,.five,.six,.plusminus,.add],
-                [.one,.two,.three,.sqrt,.multiply],
+                [.one,.two,.three,(squareRootInsteadOfPercentage ? .sqrt : .percent),.multiply],
                 [.zero,.dot, (squareStyleSignsFlipped ? .equal : .divide),(squareStyleSignsFlipped ? .divide : .equal)]
             ]
         }
@@ -338,6 +358,7 @@ struct CalculatorButton: View {
         }
     }
 }
+
 
 struct CalculatorView_Previews: PreviewProvider {
     static var previews: some View {

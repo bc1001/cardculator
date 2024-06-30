@@ -50,11 +50,11 @@ class SpringBoardHook: ClassHook<SpringBoard> {
         do {
             try PreferenceManager.shared.loadSettings()
         } catch {
-            remLog(error.localizedDescription)
+            log(error)
         }
-        remLog("loaded")
 
         calculatorWindow = CalculatorWindow(frame: UIScreen.main.bounds)
+        calculatorWindow.windowScene = UIApplication.shared.keyWindow?.windowScene
         
         listener = CardculatorListener()
         
@@ -64,7 +64,6 @@ class SpringBoardHook: ClassHook<SpringBoard> {
         let observer = UnsafeMutableRawPointer(Unmanaged.passRetained(self).toOpaque())
 
         CFNotificationCenterAddObserver(center, observer, { center, observer, name, object, userInfo in
-            remLog("relo")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                 reloadSettings()
             })
@@ -74,11 +73,10 @@ class SpringBoardHook: ClassHook<SpringBoard> {
 
 
 func reloadSettings() {
-    remLog("ReloadSettings 2")
     do {
         try PreferenceManager.shared.loadSettings()
     } catch {
-        remLog("Failed to load settings: \(error.localizedDescription)")
+        log("Failed to load settings: \(error.localizedDescription)")
     }
 }
 
@@ -99,6 +97,6 @@ class CCUIModularControlCenterOverlayViewControllerHook: ClassHook<CCUIModularCo
 
 struct Cardculator: Tweak {
     init() {
-        remLog("wut")
+        log("Start")
     }
 }

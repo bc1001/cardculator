@@ -1,0 +1,45 @@
+name: Build and Upload Artifact
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Theos environment
+      run: |
+        brew install dpkg ldid
+        git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        echo 'export THEOS=$HOME/theos' >> $GITHUB_ENV
+        echo 'export PATH=$THEOS/bin:$PATH' >> $GITHUB_ENV
+        source $GITHUB_ENV
+        $THEOS/bin/bootstrap.sh
+        
+    - name: Set up iOS SDK
+      run: |
+        mkdir -p $THEOS/sdks
+        wget https://github.com/theos/sdks/archive/refs/tags/ios-14.5.zip -O $THEOS/sdks/ios-14.5.zip
+        unzip $THEOS/sdks/ios-14.5.zip -d $THEOS/sdks
+        mv $THEOS/sdks/sdks-14.5/iPhoneOS14.5.sdk $THEOS/sdks/
+        rm -rf $THEOS/sdks/sdks-14.5
+
+    - name: Build project
+      run: make
+      env:
+        THEOS: ${{ env.THEOS }}
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cardculator-build
+        path: ./.theos/obj/iphone_simulator/debug/

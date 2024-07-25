@@ -7,6 +7,10 @@
 #import <unistd.h>
 #import <arpa/inet.h>
 
+#define RLOG_IP_ADDRESS "255.255.255.255" 
+#define RLOG_PORT 5000  
+
+#define RLo
 
 __attribute__((unused)) static void RLogv(NSString* format, va_list args)
 {
@@ -24,7 +28,7 @@ __attribute__((unused)) static void RLogv(NSString* format, va_list args)
         int ret = setsockopt(sd, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable));
         if (ret)
         {
-            NSLog(@"[RemoteLog] Error: Could not open set socket to broadcast mode");
+            NSLog(@"[RemoteLog] Error: Could not set socket to broadcast mode");
             close(sd);
             return;
         }
@@ -32,16 +36,20 @@ __attribute__((unused)) static void RLogv(NSString* format, va_list args)
         struct sockaddr_in broadcastAddr;
         memset(&broadcastAddr, 0, sizeof broadcastAddr);
         broadcastAddr.sin_family = AF_INET;
-        inet_pton(AF_INET, RLOG_IP_ADDRESS, &broadcastAddr.sin_addr);
+        ret = inet_pton(AF_INET, RLOG_IP_ADDRESS, &broadcastAddr.sin_addr);
+        if (ret <= 0)
+        {
+            NSLog(@"[RemoteLog] Error: Invalid broadcast IP address");
+            close(sd);
+            return;
+        }
         broadcastAddr.sin_port = htons(RLOG_PORT);
 
-        char* request = (char*)[str UTF8String];
+        const char* request = [str UTF8String];
         ret = sendto(sd, request, strlen(request), 0, (struct sockaddr*)&broadcastAddr, sizeof broadcastAddr);
         if (ret < 0)
         {
             NSLog(@"[RemoteLog] Error: Could not send broadcast");
-            close(sd);
-            return;
         }
         close(sd);
     #endif
@@ -56,4 +64,5 @@ __attribute__((unused)) static void RLog(NSString* format, ...)
         va_end(args);
     #endif
 }
-#endif
+
+#endif  // _REMOTE_LOG_H_

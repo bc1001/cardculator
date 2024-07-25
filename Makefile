@@ -2,9 +2,9 @@ ARCHS = arm64 #arm64e
 INSTALL_TARGET_PROCESSES = SpringBoard
 #INSTALL_TARGET_PROCESSES = Preferences
 TARGET := iphone:clang:14.5:13.0
-export SYSROOT = $(THEOS)/sdks/iPhoneOS14.5.sdk
+export SYSROOT = /Users/runner/theos/sdks/iPhoneOS14.5.sdk
 
-include $(THEOS)/makefiles/common.mk
+include /Users/runner/theos/makefiles/common.mk
 
 TWEAK_NAME = Cardculator
 
@@ -13,7 +13,7 @@ Cardculator_FILES = $(shell find Sources/Cardculator -name '*.swift') $(shell fi
 Cardculator_SWIFTFLAGS = -ISources/CardculatorC/include
 Cardculator_CFLAGS = -fobjc-arc -ISources/CardculatorC/include
 
-include $(THEOS_MAKE_PATH)/tweak.mk
+include /Users/runner/theos/tweak.mk
 SUBPROJECTS += prefs
 SUBPROJECTS += cardculatorccmodule
-include $(THEOS_MAKE_PATH)/aggregate.mk
+include /Users/runner/theos/makefiles/aggregate.mk

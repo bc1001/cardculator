@@ -13,7 +13,7 @@ Cardculator_FILES = $(shell find Sources/Cardculator -name '*.swift') $(shell fi
 Cardculator_SWIFTFLAGS = -ISources/CardculatorC/include
 Cardculator_CFLAGS = -fobjc-arc -ISources/CardculatorC/include
 
-include /Users/runner/theos/tweak.mk
+include /Users/runner/theos/makefiles/tweak.mk
 SUBPROJECTS += prefs
 SUBPROJECTS += cardculatorccmodule
 include /Users/runner/theos/makefiles/aggregate.mk

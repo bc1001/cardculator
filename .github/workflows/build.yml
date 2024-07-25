@@ -29,6 +29,7 @@ jobs:
           export THEOS=$HOME/theos
 
           # Clone Theos SDKs repository
+          rm -r $HOME/theos/sdks
           git clone https://github.com/theos/sdks.git $HOME/theos/sdks
 
       - name: Build the project

@@ -31,7 +31,11 @@ jobs:
           # Clone Theos SDKs repository
           rm -r $HOME/theos/sdks
           git clone https://github.com/theos/sdks.git $HOME/theos/sdks
-
+      - name: Clone and Build Comet
+        run: |
+          git clone https://github.com/ginsudev/Comet.git
+          cd Comet
+          make clean all
       - name: Build the project
         run: |
           make clean

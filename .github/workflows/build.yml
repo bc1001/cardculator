@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - uses: Randomblock1/theos-action@v1
+      - name: Clone and Build Comet
+        run: |
+          git clone https://github.com/ginsudev/Comet.git
+          cd Comet
+          make clean all
 
       - name: Set up Theos environment
         run: |
@@ -31,11 +37,6 @@ jobs:
           # Clone Theos SDKs repository
           rm -r $HOME/theos/sdks
           git clone https://github.com/theos/sdks.git $HOME/theos/sdks
-      - name: Clone and Build Comet
-        run: |
-          git clone https://github.com/ginsudev/Comet.git
-          cd Comet
-          make clean all
       - name: Build the project
         run: |
           make clean
